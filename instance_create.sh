@@ -17,7 +17,7 @@ curl -O http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img ;
 
 openstack image list ;
 
-openstack image create --container-format bare --disk-format qcow2 --file cirros-0.3.5-x86_64-disk.img cirros ;
+openstack image create --container-format bare --disk-format qcow2 --file /home/stack/cirros-0.3.5-x86_64-disk.img cirros ;
 
 openstack image list ;
 
@@ -64,7 +64,7 @@ chmod 600 key.pem ;
 # Instance creation
 
 openstack server create --flavor m1.tiny --security-group secgroup1 --nic net-id=`openstack network list | grep internal1 | awk '{ print $2 }'` --key-name key1 --image cirros instance1 --wait;
-openstack server create --flavor m1.tiny --security-group secgroup1 --nic net-id=`openstack network list | grep internal2 | awk '{ print $2 }'` --key-name key1 --image cirros instance2 --wait;
+openstack server create --flavor m1.tiny --security-group secgroup1 --nic net-id=`openstack network list | grep internal1 | awk '{ print $2 }'` --key-name key1 --image cirros instance2 --wait;
 
 sleep 30 ;
 
@@ -78,6 +78,7 @@ nova interface-list instance2 ;
 neutron floatingip-create external ;
 neutron floatingip-associate `openstack floating ip list | grep -i none | head -1| awk '{print $2}'` `nova interface-list instance2 | grep ACTIVE | awk '{ print $4 }'`
 
+sleep 10;
 nova list ;
 
 
