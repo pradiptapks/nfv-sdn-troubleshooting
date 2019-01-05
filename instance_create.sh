@@ -1,6 +1,6 @@
 #!/bin/bash
 
-file=/tmp/ovn-env-details.txt
+file=/tmp/osp-env-create.txt
 >$file
 
 echofun() {
@@ -15,11 +15,11 @@ run_cmd() {
 
 
 run_cmd "openstack flavor list";
-run_cmd "openstack flavor create --public m1.tiny --id auto --ram 512 --disk 0 --vcpus 1 --rxtx-factor 1";
+run_cmd "openstack flavor create --public m1.medium --id auto --ram 2048 --disk 0 --vcpus 4 --rxtx-factor 1";
 run_cmd "openstack flavor list";
-run_cmd "curl -O http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img";
+#run_cmd "curl -O http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img";
 run_cmd "openstack image list";
-run_cmd "openstack image create --container-format bare --disk-format qcow2 --file /home/stack/cirros-0.3.5-x86_64-disk.img cirros";
+run_cmd "openstack image create --container-format bare --disk-format qcow2 --file /home/stack/rhel-guest-image-7.6-217.x86_64.qcow2 rhel";
 run_cmd "openstack image list";
 run_cmd "neutron net-create internal1";
 run_cmd "neutron net-create internal2";
@@ -48,8 +48,8 @@ run_cmd "openstack security group rule create secgroup1 --protocol tcp --dst-por
 #run_cmd "openstack security group rule create secgroup1 --protocol udp --prefix 0.0.0.0/0 --egress";
 run_cmd "openstack keypair create key1 > key.pem";
 run_cmd "chmod 600 key.pem";
-run_cmd "openstack server create --flavor m1.tiny --security-group secgroup1 --nic net-id=`openstack network list | grep internal1 | awk '{ print $2 }'` --key-name key1 --image cirros instance1 --wait";
-run_cmd "openstack server create --flavor m1.tiny --security-group secgroup1 --nic net-id=`openstack network list | grep internal1 | awk '{ print $2 }'` --key-name key1 --image cirros instance2 --wait";
+run_cmd "openstack server create --flavor m1.medium --security-group secgroup1 --nic net-id=`openstack network list | grep internal1 | awk '{ print $2 }'` --key-name key1 --image rhel instance1 --wait";
+run_cmd "openstack server create --flavor m1.medium --security-group secgroup1 --nic net-id=`openstack network list | grep internal2 | awk '{ print $2 }'` --key-name key1 --image rhel instance2 --wait";
 run_cmd "nova interface-list instance1";
 run_cmd "neutron floatingip-create external";
 run_cmd "neutron floatingip-associate `openstack floating ip list -c ID -f value` `nova interface-list instance1 | grep ACTIVE | awk '{ print $4 }'`";
