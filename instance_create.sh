@@ -36,12 +36,16 @@ run_cmd "openstack router add subnet router1 internal1-subnet6";
 run_cmd "openstack router add subnet router1 internal2-subnet6";
 run_cmd "neutron router-gateway-set router1 external";
 run_cmd "openstack security group create secgroup1";
-run_cmd "openstack security group rule create secgroup1 --protocol icmp --prefix 0.0.0.0/0 --ingress";
-run_cmd "openstack security group rule create secgroup1 --protocol icmp --prefix 0.0.0.0/0 --egress";
-run_cmd "openstack security group rule create secgroup1 --protocol tcp --prefix 0.0.0.0/0 --ingress";
-run_cmd "openstack security group rule create secgroup1 --protocol udp --prefix 0.0.0.0/0 --ingress";
-run_cmd "openstack security group rule create secgroup1 --protocol tcp --prefix 0.0.0.0/0 --egress";
-run_cmd "openstack security group rule create secgroup1 --protocol udp --prefix 0.0.0.0/0 --egress";
+run_cmd "openstack security group rule create secgroup1 --protocol icmp --ingress"
+run_cmd "openstack security group rule create secgroup1 --protocol icmp --egress"
+run_cmd "openstack security group rule create secgroup1 --protocol tcp --dst-port 22 --ingress"
+run_cmd "openstack security group rule create secgroup1 --protocol tcp --dst-port 22 --egress"
+#run_cmd "openstack security group rule create secgroup1 --protocol icmp --prefix 0.0.0.0/0 --ingress";
+#run_cmd "openstack security group rule create secgroup1 --protocol icmp --prefix 0.0.0.0/0 --egress";
+#run_cmd "openstack security group rule create secgroup1 --protocol tcp --prefix 0.0.0.0/0 --ingress";
+#run_cmd "openstack security group rule create secgroup1 --protocol udp --prefix 0.0.0.0/0 --ingress";
+#run_cmd "openstack security group rule create secgroup1 --protocol tcp --prefix 0.0.0.0/0 --egress";
+#run_cmd "openstack security group rule create secgroup1 --protocol udp --prefix 0.0.0.0/0 --egress";
 run_cmd "openstack keypair create key1 > key.pem";
 run_cmd "chmod 600 key.pem";
 run_cmd "openstack server create --flavor m1.tiny --security-group secgroup1 --nic net-id=`openstack network list | grep internal1 | awk '{ print $2 }'` --key-name key1 --image cirros instance1 --wait";
