@@ -11,6 +11,12 @@ run_cmd() {
   source /home/stack/overcloudrc ;
   echofun "[stack@`hostname`~]$ $1 "
   eval "$1" | tee -a $file
+  if [[ $? -eq 0 ]]; then
+	echo -e "$1 || TASK COMPLETED" | tee -a $file
+  else
+	echo -e "$1 || TASK NOT COMPLETED" | tee -a $file
+	exit 1;
+  fi
 }
 
 

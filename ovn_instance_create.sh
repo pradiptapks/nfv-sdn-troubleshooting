@@ -11,6 +11,12 @@ run_cmd() {
   source /home/stack/overcloudrc ;
   echofun "[stack@`hostname`~]$ $1 "
   eval "$1" | tee -a $file
+  if [[ $? -eq 0 ]]; then
+        echo -e "$1 || TASK COMPLETED" | tee -a $file
+  else
+        echo -e "$1 || TASK NOT COMPLETED" | tee -a $file
+        exit 1;
+  fi
 }
 
 
@@ -19,7 +25,7 @@ run_cmd "openstack flavor create --public m1.medium --id auto --ram 2048 --disk 
 run_cmd "openstack flavor list";
 #run_cmd "curl -O http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img";
 run_cmd "openstack image list";
-run_cmd "openstack image create --container-format bare --disk-format qcow2 --file /home/stack/rhel-guest-image-7.6-217.x86_64.qcow2 rhel";
+run_cmd "openstack image create --container-format bare --disk-format qcow2 --file /home/stack/rhel-server-7.6-x86_64-kvm.qcow2 rhel";
 run_cmd "openstack image list";
 run_cmd "neutron net-create internal1";
 run_cmd "neutron net-create internal2";
